@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}FitBuddy — Your Plan{% endblock %}
+{% block content %}
+<section class="result-header">
+    <div>
+        <p class="eyebrow">PERSONALIZED PLAN</p>
+        <h1>Hello, {{ user.username }}.</h1>
+        <p>{{ workout_plan.overview }}</p>
+    </div>
+    {% if updated %}<div class="success-badge">Plan updated</div>{% endif %}
+</section>
+
+<section class="profile-strip">
+    <div><span>User ID</span><strong>{{ user.user_id }}</strong></div>
+    <div><span>Age</span><strong>{{ user.age }}</strong></div>
+    <div><span>Weight</span><strong>{{ user.weight }} kg</strong></div>
+    <div><span>Goal</span><strong>{{ user.goal.title() }}</strong></div>
+    <div><span>Intensity</span><strong>{{ user.intensity.title() }}</strong></div>
+</section>
+
+<section class="plan-grid">
+    {% for day in workout_plan.days %}
+    <article class="day-card">
+        <div class="day-top">
+            <span>{{ day.day }}</span>
+            <h2>{{ day.focus }}</h2>
+        </div>
+        <div class="mini-section">
+            <h3>Warm-up</h3><p>{{ day.warmup }}</p>
+        </div>
+        <div class="mini-section">
+            <h3>Exercises</h3>
+            {% for exercise in day.exercises %}
+            <div class="exercise">
+                <div>
+                    <strong>{{ exercise.name }}</strong>
+                    {% if exercise.notes %}<small>{{ exercise.notes }}</small>{% endif %}
+                </div>
+                <div class="exercise-meta">
+                    {% if exercise.sets %}{{ exercise.sets }} sets{% endif %}
+                    {% if exercise.reps %} · {{ exercise.reps }}{% endif %}
+                    {% if exercise.duration_minutes %} · {{ exercise.duration_minutes }} min{% endif %}
+                    {% if exercise.rest_seconds %} · {{ exercise.rest_seconds }}s rest{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mini-section">
+            <h3>Cooldown</h3><p>{{ day.cooldown }}</p>
+        </div>
+        <div class="recovery"><strong>Recovery:</strong> {{ day.recovery_note }}</div>
+    </article>
+    {% endfor %}
+</section>
+
+<section class="two-column">
+    <article class="card">
+        <div class="section-heading">
+            <p class="eyebrow">NUTRITION / RECOVERY</p>
+            <h2>{{ nutrition_tip.tip }}</h2>
+        </div>
+        <p>{{ nutrition_tip.why_it_matters }}</p>
+        <div class="action-box"><strong>Simple action:</strong> {{ nutrition_tip.simple_action }}</div>
+    </article>
+
+    <article class="card">
+        <div class="section-heading">
+            <p class="eyebrow">FEEDBACK LOOP</p>
+            <h2>Want to refine the plan?</h2>
+            <p>Tell FitBuddy what you want changed.</p>
+        </div>
+        <form action="/submit-feedback" method="post" class="fit-form">
+            <input type="hidden" name="user_id" value="{{ user.user_id }}">
+            <label>Feedback
+                <textarea name="feedback" rows="7" maxlength="1000" required
+                    placeholder="Example: Add more low-impact cardio and make Day 6 lighter."></textarea>
+            </label>
+            <button class="primary-btn" type="submit">Update plan with AI</button>
+        </form>
+    </article>
+</section>
+
+<div class="center-actions">
+    <a class="secondary-btn" href="/">Create another plan</a>
+    <a class="secondary-btn" href="/view-all-users">Open dashboard</a>
+</div>
+{% endblock %}

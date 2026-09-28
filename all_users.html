@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}FitBuddy — Dashboard{% endblock %}
+{% block content %}
+<section class="result-header">
+    <div>
+        <p class="eyebrow">ADMIN / COACH VIEW</p>
+        <h1>All users</h1>
+        <p>Local development dashboard showing stored FitBuddy profiles and plan versions.</p>
+    </div>
+</section>
+
+<section class="card table-card">
+{% if users %}
+<div class="table-wrap">
+<table>
+<thead><tr><th>User</th><th>Profile</th><th>Goal</th><th>Intensity</th><th>Plans</th><th>Action</th></tr></thead>
+<tbody>
+{% for user in users %}
+<tr>
+    <td><strong>{{ user.username }}</strong><small>{{ user.user_id }}</small></td>
+    <td>{{ user.age }} yrs · {{ user.weight }} kg</td>
+    <td>{{ user.goal.title() }}</td>
+    <td>{{ user.intensity.title() }}</td>
+    <td>
+        <span class="status-pill">Original</span>
+        {% if user.updated_plan %}<span class="status-pill updated">Updated</span>{% endif %}
+    </td>
+    <td>
+        <form action="/delete-user/{{ user.user_id }}" method="post"
+              onsubmit="return confirm('Delete this user and their stored plans?');">
+            <button class="danger-btn" type="submit">Delete</button>
+        </form>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<div class="empty-state">
+    <h2>No users yet</h2>
+    <p>Generate a plan from the homepage and it will appear here.</p>
+    <a class="primary-btn inline-btn" href="/">Create a plan</a>
+</div>
+{% endif %}
+</section>
+{% endblock %}
